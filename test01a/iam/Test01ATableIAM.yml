@@ -1,0 +1,7 @@
+Test01ATableIAM:
+    Effect: "Allow"
+    Action:
+        - dynamodb:PutItem
+    Resource:
+        - ${self:custom.Test01ATable.arn}
+        # - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/Test01ATable

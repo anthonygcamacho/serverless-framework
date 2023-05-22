@@ -73,3 +73,9 @@ Which should result in response similar to the following:
     "body": "{\n  \"message\": \"Go Serverless v3.0! Your function executed successfully!\",\n  \"input\": \"\"\n}"
 }
 ```
+
+## Resources
+
+// https://docs.aws.amazon.com/lambda/latest/dg/nodejs-handler.html#nodejs-handler-sync
+// https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-dynamodb/classes/dynamodb.html
+// https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/index.html

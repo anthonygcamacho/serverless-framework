@@ -58,7 +58,7 @@ const hello = (event, context, callback) => {
                 S: uuidv4().toString(),
             },
             Age: {
-                N: "2",
+                N: "3",
             },
             // Height: {
             //     N: event.height,
@@ -67,7 +67,7 @@ const hello = (event, context, callback) => {
             //     N: event.income,
             // },
         },
-        TableName: "Test01ATable",
+        TableName: process.env.TEST01ATABLE_NAME,
     }
 
     console.log(params)

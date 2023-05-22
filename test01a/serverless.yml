@@ -6,31 +6,19 @@ provider:
     runtime: nodejs18.x
     stage: ${opt:stage, 'dev'}
     region: us-east-2
+    environment:
+        TEST01ATABLE_NAME: ${self:custom.Test01ATable.name}
     iam:
         role:
             statements:
-                - Effect: "Allow"
-                  Action:
-                      - dynamodb:PutItem
-                  Resource:
-                      - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/Test01ATable
+                - ${file(iam/Test01ATableIAM.yml):Test01ATableIAM}
     apiGateway:
         apiKeys:
             - user2
 
 resources:
     Resources:
-        Test01ATable:
-            Type: AWS::DynamoDB::Table
-            Properties:
-                TableName: Test01ATable
-                BillingMode: PAY_PER_REQUEST
-                AttributeDefinitions:
-                    - AttributeName: id
-                      AttributeType: S
-                KeySchema:
-                    - AttributeName: id
-                      KeyType: HASH
+        Test01ATable: ${file(resources/Test01ATable.yml):Test01ATable}
 
 functions:
     hello:
@@ -41,3 +29,8 @@ functions:
                   path: /hello
                   integration: lambda
                   private: true
+
+custom:
+    Test01ATable:
+        name: !Ref Test01ATable
+        arn: !GetAtt Test01ATable.Arn
