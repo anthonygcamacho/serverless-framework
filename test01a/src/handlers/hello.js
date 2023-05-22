@@ -1,57 +1,86 @@
-const { v4: uuidv4 } = require("uuid")
+"use strict"
+
+// const { v4: uuidv4 } = require("uuid")
 // const AWS = require("aws-sdk")
 
+// const documentClient = new AWS.DynamoDB.DocumentClient()
+
+// const hello = async (event, context) => {
+//     let { hello } = JSON.parse(event.body)
+//     const now = new Date()
+
+//     let dbObj = {
+//         id: uuidv4(),
+//         name: "Something heren",
+//         createdAt: now.toISOString(),
+//     }
+
+//     console.log(dbObj)
+
+//     try {
+//         await documentClient
+//             .put({
+//                 TableName: "Test01ATable",
+//                 Item: dbObj,
+//             })
+//             .promise()
+//         return {
+//             statusCode: 200,
+//             body: JSON.stringify({
+//                 hello,
+//                 params,
+//             }),
+//         }
+//     } catch (error) {
+//         console.log(error)
+//         return {
+//             statusCode: 500,
+//             body: JSON.stringify({
+//                 error,
+//             }),
+//         }
+//     }
+// }
+
+// module.exports.handler = hello
+
+const { v4: uuidv4 } = require("uuid")
+
 const { DynamoDB } = require("@aws-sdk/client-dynamodb")
-const dynamodb = new DynamoDB({ region: "us-west-2" })
+const dynamodb = new DynamoDB({ region: "us-east-2" })
 
-// const dynamodb = AWS.DynamoDB.DocumentClient()
-
-const hello = async (event, context) => {
-    let { hello } = JSON.parse(event.body)
-    const now = new Date()
-
-    // dbObj = {
-    //     id: uuidv4(),
-    //     name: "Something heren",
-    //     createdAt: now.toISOString(),
-    // }
-
-    // await dynamodb
-    //     .put({
-    //         TableName: "Test01ATable",
-    //         Item: dbObj,
-    //     })
-    //     .promise()
+const hello = (event, context, callback) => {
+    console.log(event)
 
     const params = {
         Item: {
-            UserId: {
-                S: uuidv4(),
+            id: {
+                S: uuidv4().toString(),
             },
-            name: {
-                S: "Bones",
+            Age: {
+                N: "2",
             },
-            age: {
-                N: 21,
-            },
-            createdAt: {
-                D: now.toISOString(),
-            },
+            // Height: {
+            //     N: event.height,
+            // },
+            // Income: {
+            //     N: event.income,
+            // },
         },
         TableName: "Test01ATable",
     }
 
     console.log(params)
 
-    await dynamodb.putItem(params)
-
-    return {
-        statusCode: 200,
-        body: JSON.stringify({
-            hello,
-            params,
-        }),
-    }
+    dynamodb.putItem(params, function (err, data) {
+        if (err) {
+            console.log(err)
+            callback(err)
+        } else {
+            console.log(data)
+            callback(null, data.$metadata)
+        }
+    })
 }
 
 module.exports.handler = hello
