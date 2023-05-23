@@ -1,6 +1,9 @@
 service: test01a
 frameworkVersion: "3"
 
+plugins:
+    - serverless-esbuild
+
 provider:
     name: aws
     runtime: nodejs18.x
@@ -12,6 +15,8 @@ provider:
         role:
             statements:
                 - ${file(iam/Test01ATableIAM.yml):Test01ATableIAM}
+    httpApi:
+        cors: true
     apiGateway:
         apiKeys:
             - user2

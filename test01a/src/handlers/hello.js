@@ -1,58 +1,72 @@
 "use strict"
 
-// const { v4: uuidv4 } = require("uuid")
-// const AWS = require("aws-sdk")
+import { v4 as uuidv4 } from "uuid"
+import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb"
+import validator from "@middy/validator"
+import { transpileSchema } from "@middy/validator/transpile"
+import creatError from "http-errors"
+import middyMiddleware from "../middleware/middy"
+import helloSchema from "../schemas/helloSchema"
 
-// const documentClient = new AWS.DynamoDB.DocumentClient()
+const client = new DynamoDBClient({ region: "us-east-2" })
 
-// const hello = async (event, context) => {
-//     let { hello } = JSON.parse(event.body)
-//     const now = new Date()
+const hello = async (event, context) => {
+    console.log(event)
+    let { hello } = event.body
+    console.log(hello)
+    const now = new Date()
 
-//     let dbObj = {
-//         id: uuidv4(),
-//         name: "Something heren",
-//         createdAt: now.toISOString(),
-//     }
+    const input = {
+        Item: {
+            id: {
+                S: uuidv4().toString(),
+            },
+            Age: {
+                N: "7",
+            },
+            Date: {
+                S: now.toISOString(),
+            },
+        },
+        TableName: process.env.TEST01ATABLE_NAME,
+    }
+    console.log(input)
 
-//     console.log(dbObj)
+    try {
+        const command = new PutItemCommand(input)
+        await client.send(command)
+    } catch (error) {
+        console.error(error)
+        throw new creatError.InternalServerError(error)
+    }
 
-//     try {
-//         await documentClient
-//             .put({
-//                 TableName: "Test01ATable",
-//                 Item: dbObj,
-//             })
-//             .promise()
-//         return {
-//             statusCode: 200,
-//             body: JSON.stringify({
-//                 hello,
-//                 params,
-//             }),
-//         }
-//     } catch (error) {
-//         console.log(error)
-//         return {
-//             statusCode: 500,
-//             body: JSON.stringify({
-//                 error,
-//             }),
-//         }
-//     }
-// }
+    return {
+        statusCode: 200,
+        body: JSON.stringify({
+            input,
+        }),
+    }
+}
 
-// module.exports.handler = hello
+export const handler = middyMiddleware(hello).use(
+    validator({
+        eventSchema: transpileSchema(helloSchema),
+        ajvOptions: {
+            useDefaults: true,
+            strict: false,
+        },
+    })
+)
 
 // -----------------------------------------------------------------------------------------
 
 // const { v4: uuidv4 } = require("uuid")
 
-// const { DynamoDB } = require("@aws-sdk/client-dynamodb")
-// const dynamodb = new DynamoDB({ region: "us-east-2" })
+// const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb")
+// const client = new DynamoDBClient({ region: "us-east-2" })
 
 // const hello = (event, context, callback) => {
-//     console.log(event)
+//     // console.log(event)
 
 //     const now = new Date()
 
@@ -62,7 +76,7 @@
 //                 S: uuidv4().toString(),
 //             },
 //             Age: {
-//                 N: "3",
+//                 N: "4",
 //             },
 //             Date: {
 //                 S: now.toISOString(),
@@ -76,62 +90,17 @@
 
 //     console.log(params)
 
-//     dynamodb.putItem(params, function (err, data) {
-//         if (err) {
-//             console.log(err)
-//             callback(err)
-//         } else {
+//     const command = new PutItemCommand(params)
+//     client.send(command).then(
+//         (data) => {
 //             console.log(data)
 //             callback(null, data.$metadata)
+//         },
+//         (error) => {
+//             console.log(error)
+//             callback(error)
 //         }
-//     })
+//     )
 // }
 
 // module.exports.handler = hello
-
-// -----------------------------------------------------------------------------------------
-
-const { v4: uuidv4 } = require("uuid")
-
-const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb")
-const client = new DynamoDBClient({ region: "us-east-2" })
-
-const hello = (event, context, callback) => {
-    // console.log(event)
-
-    const now = new Date()
-
-    const params = {
-        Item: {
-            id: {
-                S: uuidv4().toString(),
-            },
-            Age: {
-                N: "4",
-            },
-            Date: {
-                S: now.toISOString(),
-            },
-            // Income: {
-            //     N: event.income,
-            // },
-        },
-        TableName: process.env.TEST01ATABLE_NAME,
-    }
-
-    console.log(params)
-
-    const command = new PutItemCommand(params)
-    client.send(command).then(
-        (data) => {
-            console.log(data)
-            callback(null, data.$metadata)
-        },
-        (error) => {
-            console.log(error)
-            callback(error)
-        }
-    )
-}
-
-module.exports.handler = hello
