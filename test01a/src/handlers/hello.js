@@ -44,13 +44,62 @@
 
 // module.exports.handler = hello
 
+// -----------------------------------------------------------------------------------------
+
+// const { v4: uuidv4 } = require("uuid")
+
+// const { DynamoDB } = require("@aws-sdk/client-dynamodb")
+// const dynamodb = new DynamoDB({ region: "us-east-2" })
+
+// const hello = (event, context, callback) => {
+//     console.log(event)
+
+//     const now = new Date()
+
+//     const params = {
+//         Item: {
+//             id: {
+//                 S: uuidv4().toString(),
+//             },
+//             Age: {
+//                 N: "3",
+//             },
+//             Date: {
+//                 S: now.toISOString(),
+//             },
+//             // Income: {
+//             //     N: event.income,
+//             // },
+//         },
+//         TableName: process.env.TEST01ATABLE_NAME,
+//     }
+
+//     console.log(params)
+
+//     dynamodb.putItem(params, function (err, data) {
+//         if (err) {
+//             console.log(err)
+//             callback(err)
+//         } else {
+//             console.log(data)
+//             callback(null, data.$metadata)
+//         }
+//     })
+// }
+
+// module.exports.handler = hello
+
+// -----------------------------------------------------------------------------------------
+
 const { v4: uuidv4 } = require("uuid")
 
-const { DynamoDB } = require("@aws-sdk/client-dynamodb")
-const dynamodb = new DynamoDB({ region: "us-east-2" })
+const { DynamoDBClient, PutItemCommand } = require("@aws-sdk/client-dynamodb")
+const client = new DynamoDBClient({ region: "us-east-2" })
 
 const hello = (event, context, callback) => {
-    console.log(event)
+    // console.log(event)
+
+    const now = new Date()
 
     const params = {
         Item: {
@@ -58,11 +107,11 @@ const hello = (event, context, callback) => {
                 S: uuidv4().toString(),
             },
             Age: {
-                N: "3",
+                N: "4",
             },
-            // Height: {
-            //     N: event.height,
-            // },
+            Date: {
+                S: now.toISOString(),
+            },
             // Income: {
             //     N: event.income,
             // },
@@ -72,15 +121,17 @@ const hello = (event, context, callback) => {
 
     console.log(params)
 
-    dynamodb.putItem(params, function (err, data) {
-        if (err) {
-            console.log(err)
-            callback(err)
-        } else {
+    const command = new PutItemCommand(params)
+    client.send(command).then(
+        (data) => {
             console.log(data)
             callback(null, data.$metadata)
+        },
+        (error) => {
+            console.log(error)
+            callback(error)
         }
-    })
+    )
 }
 
 module.exports.handler = hello
