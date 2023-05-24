@@ -1,0 +1,21 @@
+{
+    "name": "sendemailservice",
+    "version": "1.0.0",
+    "description": "<!-- title: 'AWS NodeJS Example' description: 'This template demonstrates how to deploy a NodeJS function running on AWS Lambda using the traditional Serverless Framework.' layout: Doc framework: v3 platform: AWS language: nodeJS priority: 1 authorLink: 'https://github.com/serverless' authorName: 'Serverless, inc.' authorAvatar: 'https://avatars1.githubusercontent.com/u/13742415?s=200&v=4' -->",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@aws-sdk/client-sesv2": "^3.338.0",
+        "aws-sdk": "^2.1381.0"
+    },
+    "devDependencies": {
+        "esbuild": "^0.17.19",
+        "serverless-esbuild": "^1.45.0"
+    }
+}
