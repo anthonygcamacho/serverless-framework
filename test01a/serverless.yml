@@ -35,6 +35,11 @@ functions:
                   integration: lambda
                   private: true
 
+    cronjob:
+        handler: src/handlers/cronJob.handler
+        events:
+            - schedule: rate(1 minute)
+
 custom:
     Test01ATable:
         name: !Ref Test01ATable
