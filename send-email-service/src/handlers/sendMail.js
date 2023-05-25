@@ -7,10 +7,7 @@ import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2"
 const client = new SESv2Client({ region: "us-east-2" })
 
 const sendMail = async (event, context) => {
-    // console.log(event)
     const record = event.Records[0]
-    // console.log(record)
-
     const email = JSON.parse(record.body)
     const { subject, body, recipient } = email
 
@@ -19,20 +16,15 @@ const sendMail = async (event, context) => {
         Destination: {
             ToAddresses: [recipient],
             // CcAddresses: ["STRING_VALUE"],
-            // BccAddresses: ["STRING_VALUE"],
         },
-        // ReplyToAddresses: ["noreply@gmail.com"],
         Content: {
             Simple: {
                 Subject: {
-                    // Content
-                    Data: subject, // required
-                    // Charset: "STRING_VALUE",
+                    Data: subject,
                 },
                 Body: {
                     Text: {
-                        Data: body, // required
-                        // Charset: "STRING_VALUE",
+                        Data: body,
                     },
                     // Html: {
                     //     Data: "STRING_VALUE", // required

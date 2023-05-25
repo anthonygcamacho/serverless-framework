@@ -1,4 +1,4 @@
-Test01ATableIAM:
+SFTest01ATableIAM:
     Effect: "Allow"
     Action:
         - dynamodb:PutItem

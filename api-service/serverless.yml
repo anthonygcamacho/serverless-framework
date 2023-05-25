@@ -1,4 +1,4 @@
-service: test01a
+service: sf-api-service
 frameworkVersion: "3"
 
 plugins:
@@ -14,7 +14,7 @@ provider:
     iam:
         role:
             statements:
-                - ${file(iam/Test01ATableIAM.yml):Test01ATableIAM}
+                - ${file(iam/Test01ATableIAM.yml):SFTest01ATableIAM}
     httpApi:
         cors: true
     apiGateway:
@@ -38,9 +38,12 @@ functions:
     cronjob:
         handler: src/handlers/cronJob.handler
         events:
-            - schedule: rate(1 minute)
+            - schedule: rate(1 day)
 
 custom:
     Test01ATable:
         name: !Ref Test01ATable
         arn: !GetAtt Test01ATable.Arn
+    MailQueue:
+        arn: ${cf:sf-send-email-service-${self:provider.stage}.MailQueueArn}
+        url: ${cf:sf-send-email-service-${self:provider.stage}.MailQueueUrl}

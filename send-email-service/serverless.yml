@@ -1,4 +1,4 @@
-service: mail-service
+service: sf-send-email-service
 frameworkVersion: "3"
 
 plugins:
@@ -31,6 +31,6 @@ functions:
 
 custom:
     mailQueue:
-        name: MailQueue-${self:provider.stage}
+        name: SF-MailQueue-${self:provider.stage}
         arn: !GetAtt MailQueue.Arn
         url: !Ref MailQueue
