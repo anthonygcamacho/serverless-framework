@@ -1,7 +1,11 @@
 Test01ATableIAM:
     Effect: "Allow"
     Action:
+        - dynamodb:GetItem
         - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:Scan
+        - dynamodb:Query
     Resource:
         - ${self:custom.Test01ATable.arn}
         # - arn:aws:dynamodb:${aws:region}:${aws:accountId}:table/Test01ATable

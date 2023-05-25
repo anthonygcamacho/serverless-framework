@@ -12,11 +12,13 @@ provider:
     environment:
         TEST01ATABLE_NAME: ${self:custom.Test01ATable.name}
         MAIL_QUEUE_URL: ${self:custom.MailQueue.url}
+        S3BUCKET_NAME: ${self:custom.S3Bucket.name}
     iam:
         role:
             statements:
                 - ${file(iam/Test01ATableIAM.yml):Test01ATableIAM}
                 - ${file(iam/MailQueueIAM.yml):MailQueueIAM}
+                - ${file(iam/S3BucketIAM.yml):S3BucketIAM}
     httpApi:
         cors: true
     apiGateway:
@@ -26,6 +28,8 @@ provider:
 resources:
     Resources:
         Test01ATable: ${file(resources/Test01ATable.yml):Test01ATable}
+        S3Bucket: ${file(resources/S3Bucket.yml):S3Bucket}
+        S3BucketPolicy: ${file(resources/S3Bucket.yml):S3BucketPolicy}
 
 functions:
     hello:
@@ -36,6 +40,13 @@ functions:
                   path: /hello
                   integration: lambda
                   private: true
+
+    uploadImage:
+        handler: src/handlers/uploadImage.handler
+        events:
+            - http:
+                  method: PATCH
+                  path: /account/{id}/image
 
     cronjob:
         handler: src/handlers/cronJob.handler
@@ -49,3 +60,8 @@ custom:
     MailQueue:
         arn: ${cf:sf-send-email-service-${self:provider.stage}.MailQueueArn}
         url: ${cf:sf-send-email-service-${self:provider.stage}.MailQueueUrl}
+    S3Bucket:
+        name: sf-api-bucket-pe8e3kak-${self:provider.stage}
+    esbuild:
+        bundle: true
+        minify: false
