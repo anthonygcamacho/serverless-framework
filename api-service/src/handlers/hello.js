@@ -2,20 +2,23 @@
 
 import { v4 as uuidv4 } from "uuid"
 import { DynamoDBClient, PutItemCommand } from "@aws-sdk/client-dynamodb"
+import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs"
 import validator from "@middy/validator"
 import { transpileSchema } from "@middy/validator/transpile"
 import creatError from "http-errors"
 import middyMiddleware from "../middleware/middy"
 import helloSchema from "../schemas/helloSchema"
 
-const client = new DynamoDBClient({ region: "us-east-2" })
+const dbClient = new DynamoDBClient({ region: "us-east-2" })
+const sqsClient = new SQSClient({ region: "us-east-2" })
 
 const hello = async (event, context) => {
-    console.log(event)
-    let { hello } = event.body
-    console.log(hello)
+    // console.log(event)
+    let { hello, recipient } = event.body
+    // console.log(hello)
     const now = new Date()
 
+    // DB Put
     const input = {
         Item: {
             id: {
@@ -31,10 +34,26 @@ const hello = async (event, context) => {
         TableName: process.env.TEST01ATABLE_NAME,
     }
     console.log(input)
-
     try {
-        const command = new PutItemCommand(input)
-        await client.send(command)
+        const putItemCommand = new PutItemCommand(input)
+        await dbClient.send(putItemCommand)
+    } catch (error) {
+        console.error(error)
+        throw new creatError.InternalServerError(error)
+    }
+
+    // Send message to queue
+    let params = {
+        QueueUrl: process.env.MAIL_QUEUE_URL,
+        MessageBody: JSON.stringify({
+            subject: "Test email from hello function",
+            recipient: recipient,
+            body: `Hello ${hello}, from the hello function.`,
+        }),
+    }
+    try {
+        const sendMessageCommand = new SendMessageCommand(params)
+        await sqsClient.send(sendMessageCommand)
     } catch (error) {
         console.error(error)
         throw new creatError.InternalServerError(error)
@@ -58,7 +77,7 @@ export const handler = middyMiddleware(hello).use(
     })
 )
 
-// -----------------------------------------------------------------------------------------
+// Using callbacks -----------------------------------------------------------------------------------------
 
 // const { v4: uuidv4 } = require("uuid")
 

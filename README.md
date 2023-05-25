@@ -49,3 +49,5 @@ sls logs -f <function name> --startTime <[1m | 5m | 10m]>
 [@aws-sdk/client-dynamodb](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-dynamodb/)
 
 [@aws-sdk/client-sesv2](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-sesv2/)
+
+[@aws-sdk/client-sqs](https://docs.aws.amazon.com/AWSJavaScriptSDK/v3/latest/clients/client-sqs/)

@@ -11,10 +11,12 @@ provider:
     region: us-east-2
     environment:
         TEST01ATABLE_NAME: ${self:custom.Test01ATable.name}
+        MAIL_QUEUE_URL: ${self:custom.MailQueue.url}
     iam:
         role:
             statements:
-                - ${file(iam/Test01ATableIAM.yml):SFTest01ATableIAM}
+                - ${file(iam/Test01ATableIAM.yml):Test01ATableIAM}
+                - ${file(iam/MailQueueIAM.yml):MailQueueIAM}
     httpApi:
         cors: true
     apiGateway:
