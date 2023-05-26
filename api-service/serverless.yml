@@ -65,3 +65,4 @@ custom:
     esbuild:
         bundle: true
         minify: false
+        sourcemap: external

@@ -21,6 +21,8 @@ const uploadImage = async (event) => {
         throw new creatError.InternalServerError(error)
     }
 
+    console.log(updatedDoc)
+
     return {
         statusCode: 200,
         body: JSON.stringify(updatedDoc),

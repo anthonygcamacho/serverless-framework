@@ -10,26 +10,21 @@ export const setImageUrl = async (id, imageUrl) => {
             },
         },
         TableName: process.env.TEST01ATABLE_NAME,
-        // UpdateExpression: "set imageUrl = :imageUrl",
-        // ExpressionAttributeValues: {
-        //     ":imageUrl": imageUrl,
-        // },
-        // UpdateExpression: "set Age = :Age",
+        UpdateExpression: "set imageUrl = :imageUrl",
         ExpressionAttributeValues: {
-            ":Age": 2,
+            ":imageUrl": {
+                S: imageUrl,
+            },
         },
         ReturnValues: "ALL_NEW",
     }
-    // return input
     console.log(input)
-    // const updateItemCommand = new UpdateItemCommand(input)
-    // console.log(updateItemCommand)
-    // // const result = await dbClient.send(updateItemCommand)
 
     try {
         const updateItemCommand = new UpdateItemCommand(input)
         // console.log(updateItemCommand)
-        await dbClient.send(updateItemCommand)
+        let response = await dbClient.send(updateItemCommand)
+        return response
     } catch (error) {
         console.error(error)
         throw new creatError.InternalServerError(error)
